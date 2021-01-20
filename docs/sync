@@ -1,0 +1,25 @@
+When operating in external trigger mode, the camera clears charges from the sensor at the horizontal pixel clock rate determined by the current frame rate. 
+For example, if the camera is set to 10 FPS, charges are cleared off the sensor at
+a horizontal pixel clock rate of 15 KHz
+
+
+Parameters for Kumar driver:
+    <arg name="width" default="0"/>
+    <arg name="height" default="0"/>
+    <arg name="video_mode" default="23"/>
+    <arg name="pixel_format" default="22"/>
+    <arg name="exposure" default="true"/>
+    <arg name="auto_exposure" default="true"/>
+    <arg name="exposure_value" default="1.0"/>
+    <arg name="auto_shutter" default="true"/>
+    <arg name="shutter_ms" default="10.0"/>
+    <arg name="auto_gain" default="true"/>
+    <arg name="gain_db" default="0.0"/>
+    <arg name="trigger_source" default="2"/>	<!--Important-->
+    <arg name="trigger_polarity" default="0"/>	<!--Important-->
+    <arg name="strobe_control" default="-1"/>
+    <arg name="strobe_polarity" default="0"/>
+    <arg name="white_balance" default="false"/>
+    <arg name="auto_white_balance" default="false"/>
+
+

@@ -1,0 +1,92 @@
+
+#########################################
+####### Install Chameleon3 Driver #######
+#########################################
+
+0. Download Driver to a ROS Workspace:
+git clone https://github.com/KumarRobotics/flea3.git
+
+1. Check Vendor ID and Product ID:
+lsusb
+
+2. Makedir:
+/etc/udev/rules.d/50-usb-scale.rules
+
+3. Edit "50-usb-scale.rules":
+SUBSYSTEM=="usb", ATTR{idVendor}=="1e10", ATTR{idProduct}=="3300", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="10c4", ATTR{idProduct}=="ea60", MODE="0666"
+
+4. Reload rules:
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+(reboot is not required)
+
+5. Get device name:
+rosrun flea3 flea3_list_cameras
+
+6. Launch:
+(1) roslaunch flea3 single_node.launch device:=17370961
+(2) roslaunch flea3 stereo_node.launch left:=17370961 right:=17370973
+
+* Errors: 
+(1) VN:Permision denied
+    Change flycapture SDK version, replace the files in "flea3/flycapture" with new version.
+(2) Reconfigure callback failed with exception Failed to start capture | 33 Error starting isochronous stream.
+    Then made the change (temporarily):
+    sudo sh -c 'echo 1024 > /sys/module/usbcore/parameters/usbfs_memory_mb'
+    %% alternative methods %%
+	i. To temporarily set the maximum usbfs memory limit, run this command:
+	$ sudo modprobe usbcore usbfs_memory_mb=1000
+
+	ii. To permanently set the maximum usbfs memory limit:
+	Open the /etc/default/grub file in any text editor.
+	Find and replace:
+	GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+	with this:
+	GRUB_CMDLINE_LINUX_DEFAULT="quiet splash usbcore.usbfs_memory_mb=1000"
+	Update grub with these settings:
+	$ sudo update-grub
+	Reboot and test a USB 3.1 camera.
+
+
+IMU_VN_100:
+check usb port: dmesg | grep tty*
+Then compile:
+catkin_make --pkg imu_vn_100 --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+* Before running:
+  $ ls -l /dev/ttyUSB0
+  $ sudo chmod 777 /dev/ttyUSB0
+
+###############################################################################################################
+Examples of Flycapture:	/usr/src/flycapture/src/AsyncTriggerEx
+
+
+
+
+############################################################################
+vndevice.h
+
+#define SYNCINMODE_COUNT            3
+#define SYNCINMODE_IMU              4
+#define SYNCINMODE_ASYNC            5
+#define SYNCINEDGE_RISING           0
+#define SYNCINEDGE_FALLING          1
+#define SYNCOUTMODE_NONE            0
+#define SYNCOUTMODE_IMU_START       1
+#define SYNCOUTMODE_IMU_READY       2
+#define SYNCOUTMODE_AHRS            3
+#define SYNCOUTPOLARITY_NEGATIVE 0
+#define SYNCOUTPOLARITY_POSITIVE 1
+
+############################################################################
+imu_vn_100.cpp
+change SYNCINMODE_COUNT to SYNCINMODE_ASYNC
+
+  if (sync_info_.SyncEnabled()) {
+    ROS_INFO("Set Synchronization Control Register (id:32).");
+    VnEnsure(vn100_setSynchronizationControl(
+        &imu_, SYNCINMODE_ASYNC, SYNCINEDGE_RISING, 0, SYNCOUTMODE_IMU_START,
+        SYNCOUTPOLARITY_POSITIVE, sync_info_.skip_count,
+        sync_info_.pulse_width_us * 1000, true));
+
