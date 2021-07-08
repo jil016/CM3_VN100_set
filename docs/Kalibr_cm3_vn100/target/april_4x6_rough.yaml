@@ -1,0 +1,6 @@
+target_type: 'aprilgrid' #gridtype
+tagCols: 4               #number of apriltags
+tagRows: 6               #number of apriltags
+tagSize: 0.0545          #size of apriltag, edge to edge [m]
+tagSpacing: 0.176        #ratio of space between tags to tagSize
+# tapSpace: 0.0095

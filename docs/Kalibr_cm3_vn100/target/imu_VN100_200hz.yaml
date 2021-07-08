@@ -1,0 +1,14 @@
+rostopic: /sync/imu/imu
+update_rate: 200.0 #Hz
+
+# Borrowed from https://github.com/KumarRobotics/msckf_vio/issues/22#issuecomment-445096680
+# an alternative is from github.com/ethz-asl/kalibr/issues/111
+
+# Accelerometers
+accelerometer_noise_density: 0.02   # Noise density (continuous-time)
+accelerometer_random_walk:   0.0004 # Bias random walk
+
+# Gyroscopes
+gyroscope_noise_density:     0.010   # Noise density (continuous-time)
+gyroscope_random_walk:       8.0e-06 # Bias random walk
+
